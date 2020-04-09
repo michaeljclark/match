@@ -1,7 +1,7 @@
 /*
  * Matcher
  *
- * Using the Robin-Karp algorithm to find recurring substrings.
+ * Using the Rabin-Karp algorithm to find recurring substrings.
  *
  * Copyright (c) 2019, Michael Clark <michaeljclark@mac.com>
  *
@@ -18,7 +18,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <cstdio>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
@@ -194,55 +193,4 @@ void Matcher<Sym,Size>::decompose()
             mark++;
         }
     }
-}
-
-/** string constant for match type. */
-const char* match_type_name(MatchType type)
-{
-    switch (type) {
-    case MatchType::Literal: return "Literal";
-    case MatchType::Copy: return "Copy";
-    }
-    return nullptr;
-}
-
-/** test that runs the matcher and prints out the edit instructions. */
-void test_matcher(const char *syms)
-{
-    Matcher<> m;
-
-    /* append input data and run the match algorithm */
-    printf("Original: %s\n\n", syms);
-    m.append(syms, syms + strlen(syms));
-    m.decompose();
-
-    /* output matches in this format: New/Copy [inclusive,exclusive) */
-    size_t literals = 0, copies = 0;
-    for (auto &n : m.matches) {
-        printf("[%3zu] : %7s [ %3zu,%3zu )   # \"%s\"\n",
-            std::distance(&m.matches[0], &n), match_type_name(n.type),
-            size_t(n.offset), size_t(n.offset + n.length),
-            std::string(&m.data[n.offset], n.length).c_str());
-        switch (n.type) {
-        case MatchType::Literal: literals += n.length; break;
-        case MatchType::Copy: copies += n.length; break;
-        }
-    }
-
-    /* output matcher stats */
-    printf("\nDataSize/Literals/Copies/Iterations: %zu/%zu/%zu/%zu\n",
-        m.data.size(), literals, copies, m.iterations);
-}
-
-/*
- * $ c++ -O2 matcher.cc -o matcher
- * $ ./matcher TGGGCGTGCGCTTGAAAAGAGCCTAAGAAGAGGGGGCGTCTGGAAGGAACCGCAACGCCAAGGGAGGGTG
- */
-int main(int argc, char **argv)
-{
-    if (argc != 2) {
-        fprintf(stderr, "usage: %s \"string\"\n", argv[0]);
-        exit(9);
-    }
-    test_matcher(argv[1]);
 }
