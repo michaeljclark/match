@@ -1,15 +1,14 @@
 # matcher
 
-_Use the Rabin-Karp algorithm in C++ to find recurring substrings
-in a string and emit a near minimal edit list._
+_Rabin-Karp algorithm in C++ to find recurring substrings
+in a string and use them to construct an edit list._
 
 ## Overview
 
-This is a single header C++ implementation of the Rabin-Karp algorithm that
-is used to find recurring substrings in a string. This code finds self-
-matching substrings using a rolling hash value called a Rabin-Karp signature,
-which is composed incrementally from increasing length combinations of
-substrings offset from a marker.
+This is a single header C++ implementation of a Rabin-Karp algorithm to find
+recurring substrings in a string. This code finds self-matching substrings
+using a rolling hash known as a Rabin-Karp signature, which is composed
+incrementally from multiple length combinations offset from an increasing mark.
 
 ![Rabin-Karp algorithm illustration](rabin-karp.png)
 
