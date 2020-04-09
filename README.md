@@ -11,6 +11,9 @@ matching substrings using a rolling hash value called a Rabin-Karp signature,
 which is composed incrementally from increasing length combinations of
 substrings offset from a marker.
 
+![Rabin-Karp algorithm illustration](rabin-karp.png)
+_Figure 1: Rabin-Karp algorithm_
+
 The algorithm records offsets in a hash table indexed by the Rabin-Karp
 signature and saves a chain of the previous matching offsets for each
 signature in another table indexed by offset. Before updating the hash
