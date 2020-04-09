@@ -157,19 +157,20 @@ void Matcher<Sym,Size>::decompose()
             iterations++;
             if (pos < min_match-1) continue;
 
-            /* follow hash chain through prior matches to find the best. */
+            /*
+             * check and follow hash table hits through chain matches to
+             * find the best matches and save longer or earlier matches.
+             */
             while (last) {
                 size_t match_len = check_match(last, pos);
-                if (match_len) {
-                    /* save match if it is longer or earlier */
-                    if (match_len > len ||
-                        (match_len == len && last < best && last > pos))
-                    {
-                        best = last - pos;
-                        len = match_len;
-                    }
+                if (match_len >= min_match &&
+                     (match_len > len ||
+                        (match_len == len && last < best && last > pos)))
+                {
+                    best = last - pos;
+                    len = match_len;
                 }
-                /* follow the match if it is earlier */
+                /* follow the match hash chain if it is earlier */
                 last = prev[last] < last ? prev[last] : 0;
             }
 
@@ -177,7 +178,7 @@ void Matcher<Sym,Size>::decompose()
             if (len > pos + 1) break;
         }
 
-        if (len) {
+        if (len >= min_match) {
             /* add copy instruction to list of matches. */
             mark += len;
             matches.push_back({ MatchType::Copy, Size(best), Size(len) });
