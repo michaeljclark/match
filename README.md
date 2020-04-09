@@ -1,18 +1,38 @@
 # matcher
 
-_Using the Rabin-Karp algorithm in C++ to find recurring substrings._
+_Use the Rabin-Karp algorithm in C++ to find recurring substrings
+in a string and emit a near minimal edit list._
 
 ## Overview
 
-Single header C++ implementation of the Rabin-Karp algorithm to find
-recurring substrings in a string. The code finds substrings using a
-rolling hash of multiple length combinations from a mark, and checks
-them for prior matches in a hash chain, inserting copy instructions
-for the best matches or new literal instructions for new data. Outputs
-a list of instructions referencing new data or copies of prior data.
+This is a single header C++ implementation of the Rabin-Karp algorithm that
+is used to find recurring substrings in a string. This code finds self-
+matching substrings using a rolling hash value called a Rabin-Karp signature,
+which is composed incrementally from increasing length combinations of
+substrings offset from a marker.
 
-- ___Match[type=Literal]___ - create new literal from source.
-- ___Match[type=Copy]___ - self referential copy from context.
+The algorithm records offsets in a hash table indexed by the Rabin-Karp
+signature and saves a chain of the previous matching offsets for each
+signature in another table indexed by offset. Before updating the hash
+table with the current offset, the previous offset for the current signature
+is saved into the previous table and a chain indexed from the current offset
+to the previous offset has now been created.
+
+The search algorithm proceeds to check for hits and follows the chains of
+offsets leading through all prior occurances of a given Rabin-Karp signature,
+all the way back to the earliest match. The algorithm checks these approximate
+matches, and if valid, inserts copy instructions for the best match, into
+the match list, otherwise, emitting instructions to add new literals. The
+matches are approximate because there is a collision probability, however there
+are multiple entries that can be used to predict previous offsets.
+
+The output is a list of instructions referencing new data
+or copies of previous data.
+
+- ___Vector&lt;Match&gt;___
+  - ___Type___ type (* _Literal_ or _Copy_ *)
+  - ___Size___ offset
+  - ___Size___ length
 
 The matcher is designed to be use after a symbol input stage in a text
 indexer or compression engine. The matches in the match list can be
