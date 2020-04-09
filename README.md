@@ -12,22 +12,23 @@ which is composed incrementally from increasing length combinations of
 substrings offset from a marker.
 
 ![Rabin-Karp algorithm illustration](rabin-karp.png)
-_Figure 1: Rabin-Karp algorithm_
 
-The algorithm records offsets in a hash table indexed by the Rabin-Karp
-signature and saves a chain of the previous matching offsets for each
-signature in another table indexed by offset. Before updating the hash
-table with the current offset, the previous offset for the current signature
-is saved into the previous table and a chain indexed from the current offset
-to the previous offset has now been created.
+The algorithm records offsets of substring occurances in a hash table
+(_'head'_) indexed by the Rabin-Karp signature and uses the hash table
+information to compose a chain of occurances in a second table (_'prev'_),
+indexed by offset, which leads from the current match to the last match.
+Each position in the previous match table contains an offset to the last
+match for the same signature recorded at a prior offset.
 
-The search algorithm proceeds to check for hits and follows the chains of
-offsets leading through all prior occurances of a given Rabin-Karp signature,
-all the way back to the earliest match. The algorithm checks these approximate
-matches, and if valid, inserts copy instructions for the best match, into
-the match list, otherwise, emitting instructions to add new literals. The
-matches are approximate because there is a collision probability, however there
-are multiple entries that can be used to predict previous offsets.
+The search algorithm, after updating the hash table and previous match table,
+checks for a hit, and if there is a hit, it follows the chains of past offsets
+leading through all prior occurances of a particular Rabin-Karp signature,
+all the way back to the earliest match. The algorithm then verifies these
+approximate matches, and if valid, creates copy instructions for the best
+match, or, alternatively emits literal instructions for new text. The matches
+are approximate because there is a collision probability, however, there are
+multiple offsets that can be used to match a prior occurance, which aids with
+the probabalistic nature.
 
 The output is a list of instructions referencing new data
 or copies of previous data.
@@ -36,14 +37,6 @@ or copies of previous data.
   - ___Type___ type (* _Literal_ or _Copy_ *)
   - ___Size___ offset
   - ___Size___ length
-
-The matcher is designed to be use after a symbol input stage in a text
-indexer or compression engine. The matches in the match list can be
-converted from absolute offsets to relative distances and then fed into
-an entropy coder to implement a simple compression algorithm. See the
-[Rabin-Karp algorithm](https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm)
-article for a more complete description of the rolling hash approximate
-matching algorithm.
 
 ## Example
 
