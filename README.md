@@ -42,7 +42,7 @@ or copies of previous data.
 The following is an example invocation of the included test program:
 
 ___Test command___:
-```$ ./build/test TGGGCGTGCGCTTGAAAAGAGCCTAAGAAGAGGGGGCGTCTGGAAGGAACCGCAACGCCAAGGGAGGGTG
+```$ ./build/match TGGGCGTGCGCTTGAAAAGAGCCTAAGAAGAGGGGGCGTCTGGAAGGAACCGCAACGCCAAGGGAGGGTG
 ```
 
 ___Expected output___:

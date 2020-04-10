@@ -84,9 +84,9 @@ void test_matcher(const char *syms, size_t length)
 }
 
 /*
- * $ c++ -O2 matcher.cc -o matcher
- * $ ./matcher TGGGCGTGCGCTTGAAAAGAGCCTAAGAAGAGGGGGCGTCTGGAAGGAACCGCAACGCCAAGGGAGGGTG
- * $ ./matcher -f sample.txt
+ * $ c++ -O2 match.cc -o match
+ * $ ./match TGGGCGTGCGCTTGAAAAGAGCCTAAGAAGAGGGGGCGTCTGGAAGGAACCGCAACGCCAAGGGAGGGTG
+ * $ ./match -f sample.txt
  */
 int main(int argc, char **argv)
 {
