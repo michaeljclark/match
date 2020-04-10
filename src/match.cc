@@ -24,6 +24,46 @@
 
 #include "matcher.h"
 
+static const char* filename = nullptr;
+static const char* separator = nullptr;
+static const char* text = nullptr;
+static bool debug = false;
+static bool verbose = false;
+static bool help = false;
+
+/* trim leading whitesspace */
+static std::string ltrim(std::string s)
+{
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))));
+    return s;
+}
+
+/* trim trailing whitesspace */
+static std::string rtrim(std::string s)
+{
+    s.erase(std::find_if(s.rbegin(), s.rend(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
+
+/* split string into vector */
+static std::vector<std::string> split(std::string str,
+    std::string sep, bool inc_sep = false, bool inc_empty = false)
+{
+    size_t i, j = 0;
+    std::vector<std::string> comps;
+    while ((i = str.find_first_of(sep, j)) != std::string::npos) {
+        if (inc_empty || i - j > 0) comps.push_back(str.substr(j, i - j));
+        if (inc_sep) comps.push_back(str.substr(i, 1));
+        j = i + 1; /* assumes separator is 1-byte */
+    }
+    if (inc_empty || str.size() - j > 0) {
+        comps.push_back(str.substr(j, str.size() - j));
+    }
+    return comps;
+}
+
 /** read file into std::vector using buffered file IO */
 static size_t read_file(std::vector<uint8_t> &buf, const char* filename)
 {
@@ -54,55 +94,165 @@ static const char* match_type_name(MatchType type)
     return nullptr;
 }
 
-/** test that runs the matcher and prints out the edit instructions. */
-void test_matcher(const char *syms, size_t length)
+struct matcher_stats
 {
-    Matcher<> m;
+    size_t literals;
+    size_t copies;
+};
 
-    /* append input data and run the match algorithm */
-    printf("Original: %s%s\n", std::string(syms,
-        std::min(length,size_t(80))).c_str(), length > 80 ? "..." : "");
-    m.append(syms, syms + length);
-    m.decompose();
-
-    /* output matches in this format: New/Copy [inclusive,exclusive) */
+template <typename M>
+matcher_stats calc_stats(M &m)
+{
     size_t literals = 0, copies = 0;
     for (auto &n : m.matches) {
-        printf("[%3zu] : %7s [ %3zu,%3zu )   # \"%s\"\n",
-            std::distance(&m.matches[0], &n), match_type_name(n.type),
-            size_t(n.offset), size_t(n.offset + n.length),
-            std::string(&m.data[n.offset], n.length).c_str());
         switch (n.type) {
         case MatchType::Literal: literals += n.length; break;
         case MatchType::Copy: copies += n.length; break;
         }
     }
+    return { literals, copies };
+}
 
-    /* output matcher stats */
+template <typename M>
+void dump_matches(M &m)
+{
+    /* output matches in this format: New/Copy [inclusive,exclusive) */
+    for (auto &n : m.matches) {
+        printf("[%3zu] : %7s [ %3zu,%3zu )   # \"%s\"\n",
+            std::distance(&m.matches[0], &n), match_type_name(n.type),
+            size_t(n.offset), size_t(n.offset + n.length),
+            std::string(&m.data[n.offset], n.length).c_str());
+    }
+}
+
+/** test that runs the matcher and prints out the edit instructions. */
+void match_text(const char *syms, size_t length)
+{
+    Matcher<> m;
+
+    if (separator) {
+        std::vector<std::string> symbols =
+            split(rtrim(ltrim(std::string(syms, length))), separator);
+        if (verbose) {
+            for (auto sym : symbols) {
+                printf("Symbol: %s\n", sym.c_str());
+            }
+        }
+        for (auto sym : symbols) {
+            m.append(sym.begin(), sym.end());
+            m.decompose();
+        }
+    } else {
+        if (verbose) {
+            printf("OriginalText: %s\n", std::string(syms, length).c_str());
+        }
+        m.append(syms, syms + length);
+        m.decompose();
+    }
+
+    if (verbose) {
+        dump_matches(m);
+    }
+
+    matcher_stats s = calc_stats(m);
+
 #ifdef MATCHER_DEBUG
     printf("DataSize/Literals/Copies/Iterations: %zu/%zu/%zu/%zu/%zu\n",
-        m.data.size(), literals, copies, m.i1, m.i2);
+        m.data.size(), s.literals, s.copies, m.i1, m.i2);
 #else
     printf("DataSize/Literals/Copies/Iterations: %zu/%zu/%zu\n",
-        m.data.size(), literals, copies);
+        m.data.size(), s.literals, s.copies);
 #endif
 }
 
 /*
+ * command line options
+ */
+
+void print_help(int argc, char **argv)
+{
+    fprintf(stderr,
+        "Usage: %s [options]\n"
+        "\n"
+        "Options:\n"
+        "  -f, --text <text>            symbols from argument\n"
+        "  -f, --file <filename>        symbols from file\n"
+        "  -s, --split <separator>      split input symbols\n"
+        "  -v, --verbose                enable verbose output\n"
+        "  -d, --debug                  enable debug output\n"
+        "  -h, --help                   command line help\n",
+        argv[0]);
+}
+
+bool check_param(bool cond, const char *param)
+{
+    if (cond) {
+        printf("error: %s requires parameter\n", param);
+    }
+    return (help = cond);
+}
+
+bool match_opt(const char *arg, const char *opt, const char *longopt)
+{
+    return strcmp(arg, opt) == 0 || strcmp(arg, longopt) == 0;
+}
+
+void parse_options(int argc, char **argv)
+{
+    int i = 1;
+    while (i < argc) {
+        if (match_opt(argv[i], "-t", "--text")) {
+            if (check_param(++i == argc, "--text")) break;
+            text = argv[i++];
+        } else if (match_opt(argv[i], "-f", "--file")) {
+            if (check_param(++i == argc, "--file")) break;
+            filename = argv[i++];
+        } else if (match_opt(argv[i], "-s", "--separator")) {
+            if (check_param(++i == argc, "--separator")) break;
+            separator = argv[i++];
+        } else if (match_opt(argv[i], "-d", "--debug")) {
+            debug = true;
+            i++;
+        } else if (match_opt(argv[i], "-v", "--verbose")) {
+            verbose = true;
+            i++;
+        } else if (match_opt(argv[i], "-h", "--help")) {
+            help = true;
+            i++;
+        } else {
+            fprintf(stderr, "error: unknown option: %s\n", argv[i]);
+            help = true;
+            break;
+        }
+    }
+
+    if (help) {
+        print_help(argc, argv);
+        exit(1);
+    }
+}
+
+/*
  * $ c++ -O2 match.cc -o match
- * $ ./match TGGGCGTGCGCTTGAAAAGAGCCTAAGAAGAGGGGGCGTCTGGAAGGAACCGCAACGCCAAGGGAGGGTG
+ * $ ./match -t TGGGCGTGCGCTTGAAAAGAGCCTAAGAAGAGGGGGCGTCTGGAAGGAACCGCAACGCCAAGGGAGGGTG
  * $ ./match -f sample.txt
  */
+/*
+ * main program
+ */
+
 int main(int argc, char **argv)
 {
-    if (argc == 2) {
-        test_matcher(argv[1], strlen(argv[1]));
-    } else if (argc == 3 && (strcmp(argv[1], "-f") == 0)) {
+    parse_options(argc, argv);
+
+    if (filename) {
         std::vector<uint8_t> buf;
-        size_t len = read_file(buf, argv[2]);
-        test_matcher((const char*)&buf[0], len);
+        size_t len = read_file(buf, filename);
+        match_text((const char*)&buf[0], len);
+    } else if (text) {
+        match_text(text, strlen(text));
     } else {
-        fprintf(stderr, "usage: %s \"string\"\n", argv[0]);
+        fprintf(stderr, "error: must specify --text or --file\n");
         exit(9);
     }
 }
