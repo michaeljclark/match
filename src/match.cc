@@ -79,8 +79,13 @@ void test_matcher(const char *syms, size_t length)
     }
 
     /* output matcher stats */
-    printf("DataSize/Literals/Copies/Iterations: %zu/%zu/%zu/%zu\n",
-        m.data.size(), literals, copies, m.iterations);
+#ifdef MATCHER_DEBUG
+    printf("DataSize/Literals/Copies/Iterations: %zu/%zu/%zu/%zu/%zu\n",
+        m.data.size(), literals, copies, m.i1, m.i2);
+#else
+    printf("DataSize/Literals/Copies/Iterations: %zu/%zu/%zu\n",
+        m.data.size(), literals, copies);
+#endif
 }
 
 /*

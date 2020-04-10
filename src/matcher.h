@@ -27,6 +27,18 @@
 #include <string>
 #include <limits>
 
+#define MATCHER_DEBUG
+
+#ifdef MATCHER_DEBUG
+#define MATCHER_STATS_VARS(a, b) size_t a, b
+#define MATCHER_STATS_INIT(a, b) a = b = 0
+#define MATCHER_STATS_INCR(x) x++
+#else
+#define MATCHER_STATS_VARS(a, b)
+#define MATCHER_STATS_INIT(a, b)
+#define MATCHER_STATS_INCR(x)
+#endif
+
 template <typename T>
 using Vector = std::vector<T>;
 
@@ -50,15 +62,16 @@ struct Matcher
     const size_t hash_size = 1048576;
 
     const size_t min_match = 3;
-    const size_t max_match = 64;
+    const size_t max_match = 8;
 
     Vector<Sym> data;
     Vector<Size> prev;
     Vector<Size> head;
     size_t mark;
-    size_t iterations;
 
     Vector<Match<Size>> matches;
+
+    MATCHER_STATS_VARS(i1, i2);
 
     Matcher();
 
@@ -74,8 +87,10 @@ struct Matcher
 
 /** construct matcher instance with default hash table size. */
 template <typename Sym, typename Size>
-Matcher<Sym,Size>::Matcher() : data(), prev(), head(), mark(0), iterations(0)
+Matcher<Sym,Size>::Matcher() : data(), prev(), head(), mark(0), matches()
 {
+    MATCHER_STATS_INIT(i1, i2);
+
     head.resize(hash_size);
 }
 
@@ -154,7 +169,9 @@ void Matcher<Sym,Size>::decompose()
             size_t hpos = hash_slot(hval);
             size_t last = prev[mark + pos] = head[hpos];
             head[hpos] = mark + pos;
-            iterations++;
+
+            MATCHER_STATS_INCR(i1);
+
             if (pos < min_match-1) continue;
 
             /*
@@ -170,6 +187,9 @@ void Matcher<Sym,Size>::decompose()
                     best = last - pos;
                     len = match_len;
                 }
+
+                MATCHER_STATS_INCR(i2);
+
                 /* follow the match hash chain if it is earlier */
                 last = prev[last] < last ? prev[last] : 0;
             }
