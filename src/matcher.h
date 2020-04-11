@@ -55,7 +55,7 @@ struct Match
 };
 
 /** incremental matcher algorithm to find recurring substrings. */
-template <typename Sym = char, typename Size = uint64_t>
+template <typename Sym = char, typename Size = uint32_t>
 struct Matcher
 {
     const size_t hash_prime = 1047887;
