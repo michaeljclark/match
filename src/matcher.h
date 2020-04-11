@@ -196,7 +196,7 @@ void Matcher<Sym,Size>::decompose()
                 MATCHER_STATS_INCR(i2);
 
                 /* follow the match hash chain if it is earlier */
-                last = prev[last] < last ? prev[last] : 0;
+                last = match_len > pos && prev[last] < last ? prev[last] : 0;
             }
 
             /* if hash table hit finds longer entry, we'll bail early. */
