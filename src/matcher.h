@@ -151,7 +151,7 @@ void Matcher<Sym,Size>::decompose()
      * - Match[type=Literal] - create new literal from source.
      * - Match[type=Copy] - self referential copy from context.
      *
-     * Complexity ~ O(n·log₂(n))
+     * Complexity ~ O(n)
      */
 
     if (mark < data.size()) {
