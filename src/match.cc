@@ -175,7 +175,7 @@ void print_help(int argc, char **argv)
         "Usage: %s [options]\n"
         "\n"
         "Options:\n"
-        "  -f, --text <text>            symbols from argument\n"
+        "  -t, --text <text>            symbols from argument\n"
         "  -f, --file <filename>        symbols from file\n"
         "  -s, --split <separator>      split input symbols\n"
         "  -v, --verbose                enable verbose output\n"
