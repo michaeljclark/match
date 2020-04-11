@@ -153,6 +153,11 @@ void Matcher<Sym,Size>::decompose()
      *
      * Complexity ~ O(n·log₂(n))
      */
+
+    if (mark < data.size()) {
+        matches.push_back({ MatchType::Literal, Size(mark), Size(0) });
+    }
+
     while (mark < data.size())
     {
         /* Use the Rabin-Karp algorithm to match substrings from our mark. */
@@ -199,9 +204,13 @@ void Matcher<Sym,Size>::decompose()
         }
 
         if (len >= min_match) {
-            /* add copy instruction to list of matches. */
             mark += len;
-            matches.push_back({ MatchType::Copy, Size(best), Size(len) });
+            /* add copy instruction to list of matches. */
+            if (matches.size() > 0 && matches.back().length == 0) {
+                matches.back() = { MatchType::Copy, Size(best), Size(len) };
+            } else {
+                matches.push_back({ MatchType::Copy, Size(best), Size(len) });
+            }
         } else {
             /* add new literal instruction if required. */
             if (matches.size() == 0 ||
