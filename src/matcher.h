@@ -208,10 +208,10 @@ void Matcher<Sym,Size>::decompose()
         if (len >= min_match) {
             mark += len;
             /* add copy instruction to list of matches. */
-            if (matches.size() > 0 && matches.back().length == 0) {
-                matches.back() = { MatchType::Copy, Size(best), Size(len) };
-            } else {
+            if (matches.size() == 0 || matches.back().length > 0) {
                 matches.push_back({ MatchType::Copy, Size(best), Size(len) });
+            } else {
+                matches.back() = { MatchType::Copy, Size(best), Size(len) };
             }
         } else {
             /* add new literal instruction if required. */
