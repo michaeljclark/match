@@ -62,7 +62,7 @@ struct Matcher
     const size_t hash_size = 1048576;
 
     const size_t min_match = 3;
-    const size_t max_match = 8;
+    const size_t max_match = 32;
 
     Vector<Sym> data;
     Vector<Size> prev;
