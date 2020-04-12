@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.0.2)
 
 project(match)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 include(CheckCXXCompilerFlag)
 
 macro(add_compiler_flags)
