@@ -84,7 +84,7 @@ struct Matcher
     size_t hash_slot(Size hval);
     size_t check_match(size_t last, size_t pos);
 
-    void decompose();
+    void decompose(bool partition = true);
 };
 
 /** construct matcher instance with default hash table size. */
@@ -141,7 +141,7 @@ size_t Matcher<Sym,Size>::hash_slot(Size hval)
 
 /** incrementally run the match algorithm on new data past mark. */
 template <typename Sym, typename Size>
-void Matcher<Sym,Size>::decompose()
+void Matcher<Sym,Size>::decompose(bool partition)
 {
     /* 
      * Use the Rabin-Karp algorithm to find recurring substrings in a string
@@ -156,7 +156,7 @@ void Matcher<Sym,Size>::decompose()
      * Complexity ~ O(n)
      */
 
-    if (mark < data.size()) {
+    if (partition && mark < data.size()) {
         matches.push_back({ MatchType::Literal, Size(mark), Size(0) });
     }
 
