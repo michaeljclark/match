@@ -156,13 +156,8 @@ void match_text(const char *syms, size_t length)
 
     matcher_stats s = calc_stats(m);
 
-#ifdef MATCHER_DEBUG
-    printf("DataSize/Literals/Copies/Iterations: %zu/%zu/%zu/%zu/%zu\n",
-        m.data.size(), s.literals, s.copies, m.i1, m.i2);
-#else
-    printf("DataSize/Literals/Copies/Iterations: %zu/%zu/%zu\n",
-        m.data.size(), s.literals, s.copies);
-#endif
+    printf("DataSize/Literals/Copies: %zu/%zu/%zu\n", m.data.size(), s.literals, s.copies);
+    MATCHER_DEBUG_PRINT("OuterIterations/InnerIterations: %zu/%zu\n", m.i1, m.i2);
 }
 
 /*

@@ -33,10 +33,12 @@
 #define MATCHER_STATS_VARS(a, b) size_t a, b
 #define MATCHER_STATS_INIT(a, b) a = b = 0
 #define MATCHER_STATS_INCR(x) x++
+#define MATCHER_DEBUG_PRINT(...) printf(__VA_ARGS__)
 #else
 #define MATCHER_STATS_VARS(a, b)
 #define MATCHER_STATS_INIT(a, b)
 #define MATCHER_STATS_INCR(x)
+#define MATCHER_DEBUG_PRINT(...)
 #endif
 
 template <typename T>
