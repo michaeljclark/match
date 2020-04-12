@@ -27,7 +27,7 @@ approximate matches, and if valid, creates copy instructions for the best
 match, or, alternatively emits literal instructions for new text. The matches
 are approximate because there is a collision probability, however, there are
 multiple offsets that can be used to match a prior occurance, which aids with
-the probabalistic nature.
+the probabalistic nature of the algorithm.
 
 The output is a list of instructions referencing new data
 or copies of previous data.
