@@ -134,7 +134,7 @@ template <typename Sym, typename Size>
 size_t Matcher<Sym,Size>::hash_slot(Size hval)
 {
     /* prime number has better diffusion than hval & (hash_size-1). */
-    return hval % hash_prime; 
+    return hval % hash_prime;
 }
 
 /** incrementally run the match algorithm on new data past mark. */
