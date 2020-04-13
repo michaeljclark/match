@@ -118,11 +118,13 @@ template <typename M>
 void dump_matches(M &m)
 {
     /* output matches in this format: New/Copy [inclusive,exclusive) */
+    ssize_t offset = 0;
     for (auto &n : m.matches) {
-        printf("[%3zu] : %7s [ %3zu,%3zu )   # \"%s\"\n",
+        printf("[%3zu] : %7s [ %3zd,%3zu )   # \"%s\"\n",
             std::distance(&m.matches[0], &n), match_type_name(n.type),
-            size_t(n.offset), size_t(n.offset + n.length),
+            offset - n.offset, size_t(n.length),
             std::string(&m.data[n.offset], n.length).c_str());
+        offset += n.length;
     }
 }
 
