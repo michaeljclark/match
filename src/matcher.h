@@ -30,13 +30,9 @@
 #define MATCHER_DEBUG
 
 #ifdef MATCHER_DEBUG
-#define MATCHER_STATS_VARS(a, b) size_t a, b
-#define MATCHER_STATS_INIT(a, b) a = b = 0
 #define MATCHER_STATS_INCR(x) x++
 #define MATCHER_DEBUG_PRINT(...) printf(__VA_ARGS__)
 #else
-#define MATCHER_STATS_VARS(a, b)
-#define MATCHER_STATS_INIT(a, b)
 #define MATCHER_STATS_INCR(x)
 #define MATCHER_DEBUG_PRINT(...)
 #endif
@@ -93,7 +89,9 @@ struct Matcher
 
     Vector<Match<Size>> matches;
 
-    MATCHER_STATS_VARS(i1, i2);
+#ifdef MATCHER_DEBUG
+    size_t i1 = 0, i2 = 0;
+#endif
 
     Matcher();
     Matcher(size_t hash_size);
@@ -115,7 +113,6 @@ template <typename Sym, typename Size>
 Matcher<Sym,Size>::Matcher(size_t hash_bits) : hash_bits(hash_bits),
     data(), prev(), head(), mark(0), matches()
 {
-    MATCHER_STATS_INIT(i1, i2);
     resize(hash_bits);
 }
 
