@@ -56,12 +56,30 @@ struct Match
     Size length;
 };
 
+/** primes less than power of 2 */
+static inline uint64_t prime_lt_2pn(int n)
+{
+	/* create smallest prime less than 2^n */
+    static const uint8_t k[64] = {
+        /*  0 */   0,   0,   1,   1,   3,   1,   3,   1,
+        /*  8 */   5,   3,   3,   9,   3,   1,   3,  19,
+        /* 16 */  15,   1,   5,   1,   3,   9,   3,  15,
+        /* 24 */   3,  39,   5,  39,  57,   3,  35,   1,
+        /* 32 */   5,   9,  41,  31,   5,  25,  45,   7,
+        /* 40 */  87,  21,  11,  57,  17,  55,  21, 115,
+        /* 48 */  59,  81,  27, 129,  47, 111,  33,  55,
+        /* 56 */   5,  13,  27,  55,  93,   1,  57,  25,
+    };
+    return (1ull << n) - k[n];
+}
+
 /** incremental matcher algorithm to find recurring substrings. */
 template <typename Sym = char, typename Size = uint32_t>
 struct Matcher
 {
-    const size_t hash_prime = 1047887;
-    const size_t hash_size = 1048576;
+    const size_t hash_bits = 21;
+    const size_t hash_prime = prime_lt_2pn(hash_bits);
+    const size_t hash_size = 1 << hash_bits;
 
     const size_t min_match = 3;
     const size_t max_match = 32;
