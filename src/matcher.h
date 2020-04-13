@@ -77,12 +77,14 @@ static inline uint64_t prime_lt_2pn(int n)
 template <typename Sym = char, typename Size = uint32_t>
 struct Matcher
 {
-    const size_t hash_bits = 21;
-    const size_t hash_prime = prime_lt_2pn(hash_bits);
-    const size_t hash_size = 1 << hash_bits;
+    static const size_t kInitialHashBits = 15;
 
-    const size_t min_match = 3;
-    const size_t max_match = 32;
+    size_t hash_bits;
+    size_t hash_prime;
+    size_t hash_size;
+
+    size_t min_match = 3;
+    size_t max_match = 32;
 
     Vector<Sym> data;
     Vector<Size> prev;
@@ -94,6 +96,9 @@ struct Matcher
     MATCHER_STATS_VARS(i1, i2);
 
     Matcher();
+    Matcher(size_t hash_size);
+
+    void resize(size_t hash_size);
 
     template <typename Iterator>
     void append(Iterator begin, Iterator end);
@@ -107,10 +112,21 @@ struct Matcher
 
 /** construct matcher instance with default hash table size. */
 template <typename Sym, typename Size>
-Matcher<Sym,Size>::Matcher() : data(), prev(), head(), mark(0), matches()
+Matcher<Sym,Size>::Matcher(size_t hash_bits) : hash_bits(hash_bits),
+    data(), prev(), head(), mark(0), matches()
 {
     MATCHER_STATS_INIT(i1, i2);
+    resize(hash_bits);
+}
 
+template <typename Sym, typename Size>
+Matcher<Sym,Size>::Matcher() : Matcher(kInitialHashBits) {}
+
+template <typename Sym, typename Size>
+void Matcher<Sym,Size>::resize(size_t hash_bits)
+{
+    hash_size = 1 << hash_bits;
+    hash_prime = prime_lt_2pn(hash_bits);
     head.resize(hash_size);
 }
 

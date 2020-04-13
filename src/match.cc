@@ -30,6 +30,7 @@ static const char* text = nullptr;
 static bool debug = false;
 static bool verbose = false;
 static bool help = false;
+static int bits = 15;
 
 /* trim leading whitesspace */
 static std::string ltrim(std::string s)
@@ -128,7 +129,7 @@ void dump_matches(M &m)
 /** test that runs the matcher and prints out the edit instructions. */
 void match_text(const char *syms, size_t length)
 {
-    Matcher<> m;
+    Matcher<> m(bits);
 
     if (separator) {
         std::vector<std::string> symbols =
@@ -173,6 +174,7 @@ void print_help(int argc, char **argv)
         "  -t, --text <text>            symbols from argument\n"
         "  -f, --file <filename>        symbols from file\n"
         "  -s, --split <separator>      split input symbols\n"
+        "  -b, --bits <width>           specity hash table size\n"
         "  -v, --verbose                enable verbose output\n"
         "  -d, --debug                  enable debug output\n"
         "  -h, --help                   command line help\n",
@@ -205,6 +207,9 @@ void parse_options(int argc, char **argv)
         } else if (match_opt(argv[i], "-s", "--separator")) {
             if (check_param(++i == argc, "--separator")) break;
             separator = argv[i++];
+        } else if (match_opt(argv[i], "-b", "--bits")) {
+            if (check_param(++i == argc, "--bits")) break;
+            bits = atoi(argv[i++]);
         } else if (match_opt(argv[i], "-d", "--debug")) {
             debug = true;
             i++;
