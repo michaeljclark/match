@@ -12,6 +12,12 @@ macro(add_compiler_flags)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ARGN}")
 endmacro(add_compiler_flags)
 
+check_cxx_compiler_flag("-march=haswell" has_march_haswell "int main() { return 0; }")
+if (has_march_haswell)
+	list(APPEND CMAKE_C_FLAGS -march=haswell)
+	list(APPEND CMAKE_CXX_FLAGS -march=haswell)
+endif()
+
 check_cxx_compiler_flag("-pg" has_gprof "int main() { return 0; }")
 if (CMAKE_PROFILE AND has_gprof)
   add_compiler_flags(-pg)
