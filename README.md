@@ -42,28 +42,31 @@ or copies of previous data.
 The following is an example invocation of the included test program:
 
 ___Test command___:
-```$ ./build/match TGGGCGTGCGCTTGAAAAGAGCCTAAGAAGAGGGGGCGTCTGGAAGGAACCGCAACGCCAAGGGAGGGTG
+```
+$ ./build/match -v -t TGGGCGTGCGCTTGAAAAGAGCCTAAGAAGAGGGGGCGTCTGGAAGGAACCGCAACGCCAAGGGAGGGTG
 ```
 
 ___Expected output___:
-```Original: TGGGCGTGCGCTTGAAAAGAGCCTAAGAAGAGGGGGCGTCTGGAAGGAACCGCAACGCCAAGGGAGGGTG
+```
+OriginalText: TGGGCGTGCGCTTGAAAAGAGCCTAAGAAGAGGGGGCGTCTGGAAGGAACCGCAACGCCAAGGGAGGGTG
 [  0] : Literal [   0,  7 )   # "TGGGCGT"
-[  1] :    Copy [   3,  6 )   # "GCG"
-[  2] : Literal [  10, 24 )   # "CTTGAAAAGAGCCT"
-[  3] :    Copy [  16, 20 )   # "AAGA"
-[  4] :    Copy [  17, 21 )   # "AGAG"
-[  5] :    Copy [   1,  4 )   # "GGG"
-[  6] :    Copy [   3,  7 )   # "GCGT"
-[  7] : Literal [  39, 40 )   # "C"
-[  8] :    Copy [   0,  3 )   # "TGG"
-[  9] :    Copy [  16, 19 )   # "AAG"
-[ 10] :    Copy [  13, 16 )   # "GAA"
-[ 11] : Literal [  49, 55 )   # "CCGCAA"
-[ 12] :    Copy [   8, 11 )   # "CGC"
-[ 13] :    Copy [  52, 55 )   # "CAA"
-[ 14] :    Copy [   1,  4 )   # "GGG"
-[ 15] : Literal [  64, 65 )   # "A"
-[ 16] :    Copy [   1,  4 )   # "GGG"
-[ 17] : Literal [  68, 70 )   # "TG"
-DataSize/Literals/Copies/Iterations: 70/31/39/1580
+[  1] :    Copy [   4,  3 )   # "GCG"
+[  2] : Literal [   0, 14 )   # "CTTGAAAAGAGCCT"
+[  3] :    Copy [   8,  4 )   # "AAGA"
+[  4] :    Copy [  11,  4 )   # "AGAG"
+[  5] :    Copy [  31,  3 )   # "GGG"
+[  6] :    Copy [  32,  4 )   # "GCGT"
+[  7] : Literal [   0,  1 )   # "C"
+[  8] :    Copy [  40,  3 )   # "TGG"
+[  9] :    Copy [  27,  3 )   # "AAG"
+[ 10] :    Copy [  33,  3 )   # "GAA"
+[ 11] : Literal [   0,  6 )   # "CCGCAA"
+[ 12] :    Copy [   5,  3 )   # "CGC"
+[ 13] :    Copy [   6,  3 )   # "CAA"
+[ 14] :    Copy [  60,  3 )   # "GGG"
+[ 15] : Literal [   0,  1 )   # "A"
+[ 16] :    Copy [  64,  3 )   # "GGG"
+[ 17] : Literal [   0,  2 )   # "TG"
+DataSize/Literals/Copies: 70/31/39
+OuterIterations/InnerIterations: 1018/750
 ```
