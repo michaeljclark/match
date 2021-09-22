@@ -53,9 +53,9 @@ struct Match
 };
 
 /** primes less than power of 2 */
-static inline uint64_t prime_lt_2pn(int n)
+static inline uint64_t prime_lt_pow2(int n)
 {
-	/* create smallest prime less than 2^n */
+    /* create smallest prime less than 2^n */
     static const uint8_t k[64] = {
         /*  0 */   0,   0,   1,   1,   3,   1,   3,   1,
         /*  8 */   5,   3,   3,   9,   3,   1,   3,  19,
@@ -123,7 +123,7 @@ template <typename Sym, typename Size>
 void Matcher<Sym,Size>::resize(size_t hash_bits)
 {
     hash_size = 1 << hash_bits;
-    hash_prime = prime_lt_2pn(hash_bits);
+    hash_prime = prime_lt_pow2(hash_bits);
     head.resize(hash_size);
 }
 
