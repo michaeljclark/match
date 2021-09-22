@@ -1,4 +1,4 @@
-# matcher
+# match
 
 _Rabin-Karp algorithm in C++ to find recurring substrings
 in a string and use them to construct an edit list._

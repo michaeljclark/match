@@ -1,5 +1,5 @@
 /*
- * Matcher
+ * Match
  *
  * Using the Robin-Karp algorithm to find recurring substrings.
  *
