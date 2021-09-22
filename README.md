@@ -10,7 +10,7 @@ recurring substrings in a string. This code finds self-matching substrings
 using a rolling hash known as a Rabin-Karp signature, which is composed
 incrementally from multiple length combinations offset from an increasing mark.
 
-![Rabin-Karp algorithm illustration](rabin-karp.png)
+![Rabin-Karp algorithm illustration](images/rabin-karp.svg)
 
 The algorithm records offsets of substring occurances in a hash table
 (_'head'_) indexed by the Rabin-Karp signature and uses the hash table
