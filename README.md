@@ -1,19 +1,19 @@
 # match
 
-_Rabin-Karp algorithm in C++ to find recurring substrings
+_Rabin–Karp algorithm in C++ to find recurring substrings
 in a string and use them to construct an edit list._
 
 ## Overview
 
-This is a single header C++ implementation of a Rabin-Karp algorithm to find
+This is a single header C++ implementation of the Rabin–Karp algorithm to find
 recurring substrings in a string. This code finds self-matching substrings
-using a rolling hash known as a Rabin-Karp signature, which is composed
+using a rolling hash known as a Rabin–Karp signature, which is composed
 incrementally from multiple length combinations offset from an increasing mark.
 
-![Rabin-Karp algorithm illustration](images/rabin-karp.svg)
+![Rabin–Karp algorithm illustration](images/rabin-karp.svg)
 
 The algorithm records offsets of substring occurances in a hash table
-(_'head'_) indexed by the Rabin-Karp signature and uses the hash table
+(_'head'_) indexed by the Rabin–Karp signature and uses the hash table
 information to compose a chain of occurances in a second table (_'prev'_),
 indexed by offset, which leads from the current match to the last match.
 Each position in the previous match table contains an offset to the last
@@ -21,7 +21,7 @@ match for the same signature recorded at a prior offset.
 
 The search algorithm, after updating the hash table and previous match table,
 checks for a hit, and if there is a hit, it follows the chains of past offsets
-leading through all prior occurances of a particular Rabin-Karp signature,
+leading through all prior occurances of a particular Rabin–Karp signature,
 all the way back to the earliest match. The algorithm then verifies these
 approximate matches, and if valid, creates copy instructions for the best
 match, or, alternatively emits literal instructions for new text. The matches
