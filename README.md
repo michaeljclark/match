@@ -7,8 +7,10 @@ in a string and use them to construct an edit list._
 
 This is a single header C++ implementation of the Rabin–Karp algorithm to find
 recurring substrings in a string. This code finds self-matching substrings
-using a rolling hash known as a Rabin–Karp signature, which is composed
-incrementally from multiple length combinations offset from an increasing mark.
+using a rolling hash known as a Rabin–Karp signature, which is a hash sum
+product, composed and recorded in a hashtable incrementally using multiple
+string length combinations offset from an increasing mark. These signatures
+are then looked up in the hashtable at each step to find matching substrings.
 
 ![Rabin–Karp algorithm illustration](images/rabin-karp.svg)
 
