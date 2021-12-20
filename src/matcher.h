@@ -70,7 +70,7 @@ static inline uint64_t prime_lt_pow2(int n)
 }
 
 /** incremental matcher algorithm to find recurring substrings. */
-template <typename Sym = char, typename Size = uint32_t>
+template <typename Symbol = char, typename Size = uint32_t>
 struct Matcher
 {
     static const size_t kInitialHashBits = 15;
@@ -82,7 +82,7 @@ struct Matcher
     size_t min_match = 3;
     size_t max_match = 32;
 
-    Vector<Sym> data;
+    Vector<Symbol> data;
     Vector<Size> prev;
     Vector<Size> head;
     size_t mark;
@@ -101,7 +101,7 @@ struct Matcher
     template <typename Iterator>
     void append(Iterator begin, Iterator end);
 
-    Size hash_add(Size hval, Sym symbol);
+    Size hash_add(Size hval, Symbol symbol);
     size_t hash_slot(Size hval);
     size_t check_match(size_t last, size_t pos);
 
@@ -109,18 +109,18 @@ struct Matcher
 };
 
 /** construct matcher instance with default hash table size. */
-template <typename Sym, typename Size>
-Matcher<Sym,Size>::Matcher(size_t hash_bits) : hash_bits(hash_bits),
+template <typename Symbol, typename Size>
+Matcher<Symbol,Size>::Matcher(size_t hash_bits) : hash_bits(hash_bits),
     data(), prev(), head(), mark(0), matches()
 {
     resize(hash_bits);
 }
 
-template <typename Sym, typename Size>
-Matcher<Sym,Size>::Matcher() : Matcher(kInitialHashBits) {}
+template <typename Symbol, typename Size>
+Matcher<Symbol,Size>::Matcher() : Matcher(kInitialHashBits) {}
 
-template <typename Sym, typename Size>
-void Matcher<Sym,Size>::resize(size_t hash_bits)
+template <typename Symbol, typename Size>
+void Matcher<Symbol,Size>::resize(size_t hash_bits)
 {
     hash_size = 1 << hash_bits;
     hash_prime = prime_lt_pow2(hash_bits);
@@ -128,9 +128,9 @@ void Matcher<Sym,Size>::resize(size_t hash_bits)
 }
 
 /** append input data into the internal buffer. */
-template <typename Sym, typename Size>
+template <typename Symbol, typename Size>
 template <typename Iterator>
-void Matcher<Sym,Size>::append(Iterator begin, Iterator end)
+void Matcher<Symbol,Size>::append(Iterator begin, Iterator end)
 {
     assert(data.size() + std::distance(begin, end)
         < std::numeric_limits<Size>::max());
@@ -140,8 +140,8 @@ void Matcher<Sym,Size>::append(Iterator begin, Iterator end)
 }
 
 /** check whether a hashtable hit matches and return its total length. */
-template <typename Sym, typename Size>
-size_t Matcher<Sym,Size>::check_match(size_t last, size_t pos)
+template <typename Symbol, typename Size>
+size_t Matcher<Symbol,Size>::check_match(size_t last, size_t pos)
 {
     /* exclude matches later in the string than us. */
     if (last > mark + pos - min_match) return 0;
@@ -155,24 +155,24 @@ size_t Matcher<Sym,Size>::check_match(size_t last, size_t pos)
 }
 
 /** incrementally add a symbol to a hash value to form a new hash value. */
-template <typename Sym, typename Size>
-Size Matcher<Sym,Size>::hash_add(Size hval, Sym symbol)
+template <typename Symbol, typename Size>
+Size Matcher<Symbol,Size>::hash_add(Size hval, Symbol symbol)
 {
     /* simple feedback shift xor hash function */
     return (hval << 5) ^ symbol;
 }
 
 /** translate a hash value to a hash table slot using prime modulus. */
-template <typename Sym, typename Size>
-size_t Matcher<Sym,Size>::hash_slot(Size hval)
+template <typename Symbol, typename Size>
+size_t Matcher<Symbol,Size>::hash_slot(Size hval)
 {
     /* prime number has better diffusion than hval & (hash_size-1). */
     return hval % hash_prime;
 }
 
 /** incrementally run the match algorithm on new data past mark. */
-template <typename Sym, typename Size>
-void Matcher<Sym,Size>::decompose(bool partition)
+template <typename Symbol, typename Size>
+void Matcher<Symbol,Size>::decompose(bool partition)
 {
     /* 
      * Use the Rabin-Karp algorithm to find recurring substrings in a string
